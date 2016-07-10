@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dudream.app.dao.DemoDao">
+
+    <sql id="TABLE">
+        demo
+    </sql>
+    <sql id="FIELDS">
+        `id`,`name`
+    </sql>
+    <sql id="INSERT_FIELDS">
+        `name`
+    </sql>
+
+    <insert id="addDemo" parameterType="com.dudream.app.domain.Demo">
+        INSERT INTO <include refid="TABLE"/>
+        (<include refid="INSERT_FIELDS"/>)
+        VALUES(#{name});
+    </insert>
+
+    <select id="getDemo" parameterType="int"
+            resultType="com.dudream.app.domain.Demo">
+        SELECT
+        <include refid="FIELDS"/>
+        FROM
+        <include refid="TABLE"/>
+        WHERE id=#{id};
+    </select>
+
+</mapper>
+
+<!--
+建表语句:
+CREATE DATABASES demo;
+CREATE TABLE `demo`.`demo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-->
