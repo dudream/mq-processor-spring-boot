@@ -55,9 +55,6 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven {
-        url "http://repo.mycompany.com/maven2"
-    }
 }
 
 dependencies {
