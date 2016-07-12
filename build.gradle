@@ -16,50 +16,65 @@ buildscript {
     }
 }
 
-apply plugin: "com.jfrog.artifactory"
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'spring-boot'
 
-jar {
-    baseName = 'spring-boot-gradle'
-    version =  '0.1.0'
-}
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: "com.jfrog.artifactory"
+    apply plugin: 'spring-boot'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
-artifactory {
-    contextUrl = "http://10.111.0.15:8081/artifactory"
-    resolve {
-        repository {
-            repoKey = 'libs-release'
-            username = "services"
-            password = "services"
-            maven = true
+    artifactory {
+        contextUrl = "http://10.111.0.15:8081/artifactory"
+        resolve {
+            repository {
+                repoKey = 'libs-release'
+                username = "services"
+                password = "services"
+                maven = true
+            }
         }
+    }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '2.3'
     }
 }
 
-/*
-repositories {
-    mavenCentral()
-}
-*/
-
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-amqp")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-configuration-processor")
-    compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:1.1.1")
-    compile("org.apache.commons:commons-lang3:3.4")
-    compile("commons-dbcp:commons-dbcp:1.4")
-    compile("mysql:mysql-connector-java:6.0.2")
-    compile("org.codehaus.jackson:jackson-mapper-lgpl:1.9.13")
-    compile("com.google.code.gson:gson:2.7")
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    compile project(':mq-processor-task')
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+project(':mq-processor-task') {
+    dependencies {
+        compile project(':mq-processor-service')
+    }
+}
+
+project(':mq-processor-service') {
+    dependencies {
+        compile project(':mq-processor-dal')
+    }
+}
+
+project(':mq-processor-dal') {
+    dependencies {
+        compile project(':mq-processor-model')
+        compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:1.1.1")
+        compile("commons-dbcp:commons-dbcp:1.4")
+        compile("mysql:mysql-connector-java:6.0.2")
+    }
+}
+
+project(':mq-processor-model') {
+    dependencies {
+        compile("org.springframework.boot:spring-boot-starter-amqp")
+        compile("org.springframework.boot:spring-boot-starter-actuator")
+        compile("org.springframework.boot:spring-boot-configuration-processor")
+        compile("com.google.code.gson:gson:2.7")
+        compile("org.codehaus.jackson:jackson-mapper-lgpl:1.9.13")
+        compile("org.apache.commons:commons-lang3:3.4")
+    }
 }
